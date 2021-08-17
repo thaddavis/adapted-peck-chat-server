@@ -2,7 +2,7 @@
 var express = require('express');
 var app = express();
 
-app.get('/socket.io', (req, res) => {
+app.get('/socket', (req, res) => {
   res.send('OK')
 })
 
