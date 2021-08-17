@@ -37,6 +37,7 @@ io.use(async (socket, next) => {
   console.log(new Date().toISOString());
 
   console.log("middleware -!-!- socket.handshake.auth", socket.handshake.auth);
+  console.log("middleware -!-!- socket.handshake", socket.handshake);
 
   const sessionID = socket.handshake.auth.sessionID;
   const guestInfo = socket.handshake.auth.guestInfo;
