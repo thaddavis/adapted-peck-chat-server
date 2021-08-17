@@ -9,10 +9,12 @@
   "dependencies": {
     "express": "4.13.4",
     "redis": "2.8.0",
-    "socket.io": "2.0.4",
-    "socket.io-redis": "5.2.0"
+    "socket.io": "^4.0.0",
+    "socket.io-redis": "^6.0.1"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "start-local": "FRONT_END_HOSTNAME=http://localhost:3000 REDIS_HOST=localhost PORT=4000 node index.js",
+    "start-local-debug": "DEBUG=socket* REDIS_HOST=localhost PORT=4000 node index.js"
   }
 }

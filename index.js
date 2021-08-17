@@ -1,32 +1,44 @@
 // Setup basic express server
 var express = require('express');
 var app = express();
-var path = require('path');
+
+app.get('/socket.io', (req, res) => {
+  res.send('OK')
+})
+
 var server = require('http').createServer(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, {
+  path: "/socket.io",
+  cors: {
+    origin: [process.env.FRONT_END_HOSTNAME]
+  },
+});
 var redis = require('socket.io-redis');
-io.adapter(redis({ host: process.env.REDIS_ENDPOINT, port: 6379 }));
+io.adapter(redis({ host: process.env.REDIS_HOST, port: 6379 }));
 
 var Presence = require('./lib/presence');
 
 // Lower the heartbeat timeout
-io.set('heartbeat timeout', 8000);
-io.set('heartbeat interval', 4000);
+// io.set('heartbeat timeout', 8000);
+// io.set('heartbeat interval', 4000);
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 4000;
 
 server.listen(port, function() {
   console.log('Server listening at port %d', port);
 });
 
 // Routing
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', function(socket) {
+  console.log('EVENT connection')
+  // console.log('-')
   var addedUser = false;
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function(data) {
+    console.log('EVENT new message')
     // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
       username: socket.username,
@@ -34,7 +46,14 @@ io.on('connection', function(socket) {
     });
   });
 
+  socket.on('session', function(data) {
+    console.log('EVENT session')
+  });
+
   socket.conn.on('heartbeat', function() {
+    // console.log('EVENT heartbeat')
+    console.log('-')
+
     if (!addedUser) {
       // Don't start upserting until the user has added themselves.
       return;
@@ -47,6 +66,7 @@ io.on('connection', function(socket) {
 
   // when the client emits 'add user', this listens and executes
   socket.on('add user', function(username) {
+    console.log('EVENT add user', username)
     if (addedUser) {
       return;
     }
@@ -59,6 +79,8 @@ io.on('connection', function(socket) {
     addedUser = true;
 
     Presence.list(function(users) {
+      console.log('list')
+
       socket.emit('login', {
         numUsers: users.length
       });

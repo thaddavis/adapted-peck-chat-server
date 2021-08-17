@@ -6,5 +6,5 @@ ADD . .
 
 FROM mhart/alpine-node:base-9
 COPY --from=build /srv .
-EXPOSE 3000
+EXPOSE 4000
 CMD ["node", "index.js"]
