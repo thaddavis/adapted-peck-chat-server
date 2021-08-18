@@ -38,6 +38,7 @@ io.use(async (socket, next) => {
 
   console.log("middleware -!-!- socket.handshake.auth", socket.handshake.auth);
   console.log("middleware -!-!- socket.handshake", socket.handshake);
+  console.log("REDIS_HOST", process.env.REDIS_HOST);
 
   const sessionID = socket.handshake.auth.sessionID;
   const guestInfo = socket.handshake.auth.guestInfo;
